@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.8.0] - 2026-03-01
+
+### Added
+
+- OpenCode runtime adapter (`opencode`) alongside existing runtimes
+- Adoption module with SQLite-backed state (`.overstory/adoption.db`) and CLI flows:
+  - `ov blueprint init|validate`
+  - `ov work create|assign|close`
+  - `ov run-adoption start|status|resume|report`
+
+### Fixed
+
+- Ensure `--json` works correctly for new adoption commands when invoked through the top-level `ov` router
+
 ## [0.7.6] - 2026-02-27
 
 ### Added

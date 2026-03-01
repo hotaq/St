@@ -1,15 +1,18 @@
 {
 	"name": "@os-eco/overstory-cli",
-	"version": "0.7.6",
+	"version": "0.8.0",
 	"description": "Multi-agent orchestration for AI coding agents — spawn workers in git worktrees via tmux, coordinate through SQLite mail, merge with tiered conflict resolution. Pluggable runtime adapters for Claude Code, Pi, and more.",
 	"author": "Jaymin West",
 	"license": "MIT",
 	"type": "module",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/jayminwest/overstory.git"
+		"url": "https://github.com/hotaq/St.git"
 	},
-	"homepage": "https://github.com/jayminwest/overstory",
+	"homepage": "https://github.com/hotaq/St",
+	"bugs": {
+		"url": "https://github.com/hotaq/St/issues"
+	},
 	"keywords": [
 		"ai",
 		"agents",
