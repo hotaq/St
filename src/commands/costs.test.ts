@@ -1071,6 +1071,14 @@ describe("costsCommand", () => {
 		let tempHome: string;
 		let originalHome: string | undefined;
 
+		async function setRuntimeDefault(runtimeId: string): Promise<void> {
+			const overstoryDir = join(tempDir, ".overstory");
+			await Bun.write(
+				join(overstoryDir, "config.yaml"),
+				`project:\n  name: test\n  root: ${tempDir}\n  canonicalBranch: main\nruntime:\n  default: ${runtimeId}\n`,
+			);
+		}
+
 		/** Helper to create a transcript JSONL with known token values. */
 		function makeTranscriptContent(): string {
 			const entry = {
@@ -1173,6 +1181,43 @@ describe("costsCommand", () => {
 			const out = output();
 
 			expect(out).toContain("--self");
+		});
+
+		test("--self on opencode reports unsupported transcript discovery", async () => {
+			await setRuntimeDefault("opencode");
+
+			await costsCommand(["--self"]);
+			const out = output();
+
+			expect(out).toContain(
+				"Self transcript discovery is not implemented for runtime 'opencode' yet",
+			);
+			expect(out).toContain("ov costs --live");
+		});
+
+		test("--self --json on opencode returns error payload", async () => {
+			await setRuntimeDefault("opencode");
+
+			await costsCommand(["--self", "--json"]);
+			const out = output();
+
+			const parsed = JSON.parse(out.trim()) as Record<string, unknown>;
+			expect(typeof parsed.error).toBe("string");
+			expect(parsed.error as string).toContain(
+				"Self transcript discovery is not implemented for runtime 'opencode' yet",
+			);
+		});
+
+		test("--self throws for unknown runtime default", async () => {
+			await setRuntimeDefault("unknown-runtime");
+
+			await expect(costsCommand(["--self"])).rejects.toThrow("Unknown runtime");
+		});
+
+		test("--self --json still throws for unknown runtime default", async () => {
+			await setRuntimeDefault("unknown-runtime");
+
+			await expect(costsCommand(["--self", "--json"])).rejects.toThrow("Unknown runtime");
 		});
 	});
 });

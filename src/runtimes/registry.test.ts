@@ -2,6 +2,7 @@ import { describe, expect, it } from "bun:test";
 import type { OverstoryConfig } from "../types.ts";
 import { ClaudeRuntime } from "./claude.ts";
 import { CopilotRuntime } from "./copilot.ts";
+import { OpenCodeRuntime } from "./opencode.ts";
 import { PiRuntime } from "./pi.ts";
 import { getRuntime } from "./registry.ts";
 
@@ -20,7 +21,7 @@ describe("getRuntime", () => {
 
 	it("throws with a helpful message for an unknown runtime", () => {
 		expect(() => getRuntime("unknown-runtime")).toThrow(
-			'Unknown runtime: "unknown-runtime". Available: claude',
+			'Unknown runtime: "unknown-runtime". Available: claude, pi, copilot, opencode',
 		);
 	});
 
@@ -43,7 +44,7 @@ describe("getRuntime", () => {
 		const config = { runtime: { default: "codex" } } as OverstoryConfig;
 		// No name arg — falls back to config default "codex" which is unknown.
 		expect(() => getRuntime(undefined, config)).toThrow(
-			'Unknown runtime: "codex". Available: claude',
+			'Unknown runtime: "codex". Available: claude, pi, copilot, opencode',
 		);
 	});
 
@@ -102,5 +103,18 @@ describe("getRuntime", () => {
 		const a = getRuntime("copilot");
 		const b = getRuntime("copilot");
 		expect(a).not.toBe(b);
+	});
+
+	it("returns OpenCodeRuntime when name is 'opencode'", () => {
+		const runtime = getRuntime("opencode");
+		expect(runtime).toBeInstanceOf(OpenCodeRuntime);
+		expect(runtime.id).toBe("opencode");
+	});
+
+	it("uses config.runtime.default 'opencode' when name is omitted", () => {
+		const config = { runtime: { default: "opencode" } } as OverstoryConfig;
+		const runtime = getRuntime(undefined, config);
+		expect(runtime).toBeInstanceOf(OpenCodeRuntime);
+		expect(runtime.id).toBe("opencode");
 	});
 });

@@ -69,6 +69,8 @@ export const checkDependencies: DoctorCheckFn = async (
 		}
 	}
 
+	checks.push(...(await checkConfiguredRuntimeDependency(config.runtime?.default ?? "claude")));
+
 	// If bd is available, probe for CGO/Dolt backend functionality.
 	// Only run for beads backend (CGO check is beads-specific).
 	if (trackerName === "bd") {
@@ -81,6 +83,42 @@ export const checkDependencies: DoctorCheckFn = async (
 
 	return checks;
 };
+
+async function checkConfiguredRuntimeDependency(runtimeId: string): Promise<DoctorCheck[]> {
+	const runtimeTools: Record<string, { command: string; versionFlag: string }> = {
+		claude: { command: "claude", versionFlag: "--version" },
+		pi: { command: "pi", versionFlag: "--version" },
+		copilot: { command: "copilot", versionFlag: "--version" },
+		opencode: { command: "opencode", versionFlag: "--version" },
+	};
+
+	const spec = runtimeTools[runtimeId];
+	if (!spec) {
+		return [
+			{
+				name: "runtime-default-supported",
+				category: "dependencies",
+				status: "fail",
+				message: `runtime.default '${runtimeId}' is not supported`,
+				details: [
+					`Supported runtimes: ${Object.keys(runtimeTools).join(", ")}`,
+					"Set runtime.default to a supported runtime in config.yaml",
+				],
+				fixable: true,
+			},
+		];
+	}
+
+	const runtimeCheck = await checkTool(spec.command, spec.versionFlag, true);
+	if (runtimeCheck.status === "pass") {
+		runtimeCheck.message = `Configured runtime '${runtimeId}' is available`;
+	} else {
+		runtimeCheck.message = `Configured runtime '${runtimeId}' is not available`;
+	}
+	runtimeCheck.name = `runtime-${runtimeId}-availability`;
+
+	return [runtimeCheck];
+}
 
 /**
  * Probe whether bd's Dolt database backend is functional.

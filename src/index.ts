@@ -9,6 +9,7 @@
 
 import { Command, Help } from "commander";
 import { createAgentsCommand } from "./commands/agents.ts";
+import { createBlueprintCommand } from "./commands/blueprint.ts";
 import { cleanCommand } from "./commands/clean.ts";
 import { createCompletionsCommand } from "./commands/completions.ts";
 import { createCoordinatorCommand } from "./commands/coordinator.ts";
@@ -32,6 +33,7 @@ import { nudgeCommand } from "./commands/nudge.ts";
 import { primeCommand } from "./commands/prime.ts";
 import { createReplayCommand } from "./commands/replay.ts";
 import { createRunCommand } from "./commands/run.ts";
+import { createRunAdoptionCommand } from "./commands/run-adoption.ts";
 import { slingCommand } from "./commands/sling.ts";
 import { specWriteCommand } from "./commands/spec.ts";
 import { createStatusCommand } from "./commands/status.ts";
@@ -41,6 +43,7 @@ import { traceCommand } from "./commands/trace.ts";
 import { createUpgradeCommand } from "./commands/upgrade.ts";
 import { createWatchCommand } from "./commands/watch.ts";
 import { createWorktreeCommand } from "./commands/worktree.ts";
+import { createWorkCommand } from "./commands/work.ts";
 import { OverstoryError, WorktreeError } from "./errors.ts";
 import { jsonError } from "./json.ts";
 import { brand, chalk, muted, setQuiet } from "./logging/color.ts";
@@ -93,10 +96,13 @@ const COMMANDS = [
 	"errors",
 	"replay",
 	"run",
+	"run-adoption",
 	"costs",
 	"metrics",
 	"upgrade",
 	"completions",
+	"blueprint",
+	"work",
 ];
 
 function editDistance(a: string, b: string): number {
@@ -384,10 +390,15 @@ program.addCommand(createErrorsCommand());
 program.addCommand(createReplayCommand());
 
 program.addCommand(createRunCommand());
+program.addCommand(createRunAdoptionCommand());
 
 program.addCommand(createCostsCommand());
 
 program.addCommand(createMetricsCommand());
+
+program.addCommand(createBlueprintCommand());
+
+program.addCommand(createWorkCommand());
 
 program.addCommand(createUpgradeCommand());
 

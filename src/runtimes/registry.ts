@@ -4,6 +4,7 @@
 import type { OverstoryConfig } from "../types.ts";
 import { ClaudeRuntime } from "./claude.ts";
 import { CopilotRuntime } from "./copilot.ts";
+import { OpenCodeRuntime } from "./opencode.ts";
 import { PiRuntime } from "./pi.ts";
 import type { AgentRuntime } from "./types.ts";
 
@@ -12,6 +13,7 @@ const runtimes = new Map<string, () => AgentRuntime>([
 	["claude", () => new ClaudeRuntime()],
 	["pi", () => new PiRuntime()],
 	["copilot", () => new CopilotRuntime()],
+	["opencode", () => new OpenCodeRuntime()],
 ]);
 
 /**

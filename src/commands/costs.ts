@@ -58,9 +58,19 @@ function getTranscriptDir(runtimeId: string, projectRoot: string): string | null
 			const projectKey = projectRoot.replace(/\//g, "-");
 			return join(homeDir, ".claude", "projects", projectKey);
 		}
+		case "opencode": {
+			return null;
+		}
 		default:
 			return null;
 	}
+}
+
+function selfCostUnsupportedReason(runtimeId: string): string | null {
+	if (runtimeId === "opencode") {
+		return "Self transcript discovery is not implemented for runtime 'opencode' yet. Use 'ov costs --live' for active agents.";
+	}
+	return null;
 }
 
 /**
@@ -292,6 +302,16 @@ async function executeCosts(opts: CostsOpts): Promise<void> {
 	// Handle --self flag (early return for self-scan)
 	if (self) {
 		const runtime = getRuntime(undefined, config);
+		const unsupportedReason = selfCostUnsupportedReason(runtime.id);
+		if (unsupportedReason) {
+			if (json) {
+				jsonError("costs", unsupportedReason);
+			} else {
+				process.stdout.write(`${unsupportedReason}\n`);
+			}
+			return;
+		}
+
 		const transcriptPath = await discoverOrchestratorTranscript(runtime.id, config.project.root);
 		if (!transcriptPath) {
 			if (json) {

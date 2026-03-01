@@ -236,4 +236,36 @@ describe("checkDependencies", () => {
 		expect(ovCheck).toBeDefined();
 		expect(ovCheck?.category).toBe("dependencies");
 	});
+
+	test("includes check for configured opencode runtime", async () => {
+		const opencodeConfig: OverstoryConfig = {
+			...mockConfig,
+			runtime: {
+				default: "opencode",
+			},
+		};
+
+		const checks = await checkDependencies(opencodeConfig, "/tmp/.overstory");
+		const runtimeCheck = checks.find((c) => c.name === "runtime-opencode-availability");
+
+		expect(runtimeCheck).toBeDefined();
+		expect(runtimeCheck?.category).toBe("dependencies");
+		expect(["pass", "warn", "fail"]).toContain(runtimeCheck?.status ?? "");
+	});
+
+	test("fails when runtime.default is unsupported", async () => {
+		const unsupportedConfig: OverstoryConfig = {
+			...mockConfig,
+			runtime: {
+				default: "unknown-runtime",
+			},
+		};
+
+		const checks = await checkDependencies(unsupportedConfig, "/tmp/.overstory");
+		const runtimeCheck = checks.find((c) => c.name === "runtime-default-supported");
+
+		expect(runtimeCheck).toBeDefined();
+		expect(runtimeCheck?.status).toBe("fail");
+		expect(runtimeCheck?.message).toContain("runtime.default 'unknown-runtime'");
+	});
 });
