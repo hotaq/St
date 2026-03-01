@@ -16,6 +16,11 @@ This repository is a fork we "claimed" as our main working copy:
   - `ov run-adoption start|status|resume|report`
 - Real CLI `--json` behavior verified for the new commands.
 
+## Release Line (This Fork)
+
+- Current fork version: `v0.8.0`
+- Recommended install target: the git tag (`#v0.8.0`) so your global install is stable.
+
 ## Install
 
 Prereqs: Bun, git, tmux. At least one runtime installed (Claude Code, OpenCode, Pi, Copilot).
@@ -23,7 +28,17 @@ Prereqs: Bun, git, tmux. At least one runtime installed (Claude Code, OpenCode, 
 ### Install This Fork (Recommended)
 
 ```bash
-bun add -g "git+https://github.com/hotaq/St.git#main"
+bun add -g "git+https://github.com/hotaq/St.git#v0.8.0"
+ov --version --json
+```
+
+### Upgrade (If You Already Have An Older ov)
+
+If you previously installed another build (npm or a local `file:` install), reinstall cleanly:
+
+```bash
+bun remove -g @os-eco/overstory-cli
+bun add -g "git+https://github.com/hotaq/St.git#v0.8.0"
 ov --version --json
 ```
 
